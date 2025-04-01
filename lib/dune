@@ -1,0 +1,10 @@
+(library
+ (name aoc_lib)
+ (inline_tests)
+ (preprocess
+  (pps ppx_jane ppx_expect))
+ ; [-linkall] is needed to ensure all modules are compiled. By default, the
+ ; compiler will not compile unused ml/mli files. This is a problem as at the
+ ; end of each solution file we register the solution (a side-effect), which
+ ; wouldn't get run if only [Solution.get] is called in the executable.
+ (library_flags (-linkall)))
