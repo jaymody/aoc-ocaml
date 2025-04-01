@@ -3,6 +3,8 @@ open! Base
 let solve = function
   | "y2015_day1_part1" -> Y2015_day1.Part1.solve
   | "y2015_day1_part2" -> Y2015_day1.Part2.solve
+  | "y2015_day2_part1" -> Y2015_day2.Part1.solve
+  | "y2015_day2_part2" -> Y2015_day2.Part2.solve
   | problem -> Error.raise_s [%message "no solution found" (problem : string)]
 ;;
 
