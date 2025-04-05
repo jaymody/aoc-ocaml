@@ -1,12 +1,8 @@
 open! Base
 
-let solve_common reader writer ~is_nice_string_fn =
-  let rec solve' acc =
-    match In_channel.input_line reader with
-    | None -> acc
-    | Some line -> solve' (acc + Bool.to_int (is_nice_string_fn line))
-  in
-  solve' 0 |> Int.to_string |> Out_channel.output_string writer
+let solve ~is_nice_string =
+  Utils.read_lines_and_print_int
+    (List.fold ~init:0 ~f:(fun acc line -> acc + Bool.to_int (is_nice_string line)))
 ;;
 
 module Part1 = struct
@@ -41,45 +37,10 @@ module Part1 = struct
     num_vowels s >= 3 && has_repeating_char s && not (has_bad_strings s)
   ;;
 
-  let solve = solve_common ~is_nice_string_fn:is_nice_string
-
-  module Test = struct
-    let solve = Utils.solve_from_string solve
-
-    let%expect_test "a test" =
-      solve "ugknbfddgicrmopn";
-      [%expect {| 1 |}];
-      solve "aaa";
-      [%expect {| 1 |}];
-      solve "jchzalrnumimnmhp";
-      [%expect {| 0 |}];
-      solve "haegwjzuvuyypxyu";
-      [%expect {| 0 |}];
-      solve "dvszwmarrgswjxmb";
-      [%expect {| 0 |}];
-      ()
-    ;;
-  end
+  let solve = solve ~is_nice_string
 end
 
 module Part2 = struct
-  (* let group_char_list l ~n =
-    l |> List.groupi ~break:(fun i _ _ -> i % n = 0) |> List.map ~f:String.of_list
-  ;;
-
-  let has_unique_pairs l =
-    let pairs = group_char_list l ~n:2 in
-    List.length l <> Set.length (Set.of_list (module String) pairs)
-  ;;
-
-  let contains_non_consecutive_pairs s =
-    s
-    |> String.to_list
-    |> function
-    | [] -> false
-    | _ :: l1 as l2 -> has_unique_pairs l1 || has_unique_pairs l2
-  ;; *)
-
   let contains_non_consecutive_pairs s =
     let contains_pair pair =
       let rec contains_pair' = function
@@ -106,21 +67,5 @@ module Part2 = struct
   ;;
 
   let is_nice_string s = contains_non_consecutive_pairs s && contains_sandwich s
-  let solve = solve_common ~is_nice_string_fn:is_nice_string
-
-  module Test = struct
-    let solve = Utils.solve_from_string solve
-
-    let%expect_test "a test" =
-      solve "qjhvhtzxzqqjkmpb";
-      [%expect {| 1 |}];
-      solve "xxyxx";
-      [%expect {| 1 |}];
-      solve "uurcxstgmygtbstg";
-      [%expect {| 0 |}];
-      solve "ieodomkazucvgmuy";
-      [%expect {| 0 |}];
-      ()
-    ;;
-  end
+  let solve = solve ~is_nice_string
 end

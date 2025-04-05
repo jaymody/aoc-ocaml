@@ -38,56 +38,26 @@ module Santa = struct
 end
 
 module Part1 = struct
-  let solve reader writer =
-    let rec solve' santa =
-      match In_channel.input_char reader with
-      | None | Some '\n' -> Set.length santa.Santa.seen
-      | Some c -> solve' (Santa.move santa c)
-    in
-    solve' (Santa.create ()) |> Int.to_string |> Out_channel.output_string writer
+  let solve s =
+    s
+    |> String.fold ~init:(Santa.create ()) ~f:(fun acc c -> Santa.move acc c)
+    |> fun santa -> Set.length santa.Santa.seen
   ;;
 
-  module Test = struct
-    let solve = Utils.solve_from_string solve
-
-    let%expect_test "a test" =
-      solve ">";
-      [%expect {| 2 |}];
-      solve "^>v<";
-      [%expect {| 4 |}];
-      solve "^v^v^v^v^v";
-      [%expect {| 2 |}];
-      ()
-    ;;
-  end
+  let solve = Utils.read_all_and_print_int solve
 end
 
 module Part2 = struct
-  let solve reader writer =
-    let rec solve' turn real robo =
-      match In_channel.input_char reader with
-      | None | Some '\n' -> Set.union real.Santa.seen robo.Santa.seen |> Set.length
-      | Some c ->
-        (match turn with
-         | `Real -> solve' `Robo (Santa.move real c) robo
-         | `Robo -> solve' `Real real (Santa.move robo c))
-    in
-    solve' `Real (Santa.create ()) (Santa.create ())
-    |> Int.to_string
-    |> Out_channel.output_string writer
+  let solve s =
+    s
+    |> String.fold
+         ~init:(`Real, Santa.create (), Santa.create ())
+         ~f:(fun (turn, real, robo) c ->
+           match turn with
+           | `Real -> `Robo, Santa.move real c, robo
+           | `Robo -> `Real, real, Santa.move robo c)
+    |> fun (_, real, robo) -> Set.union real.Santa.seen robo.Santa.seen |> Set.length
   ;;
 
-  module Test = struct
-    let solve = Utils.solve_from_string solve
-
-    let%expect_test "a test" =
-      solve ">";
-      [%expect {| 2 |}];
-      solve "^>v<";
-      [%expect {| 3 |}];
-      solve "^v^v^v^v^v";
-      [%expect {| 11 |}];
-      ()
-    ;;
-  end
+  let solve = Utils.read_all_and_print_int solve
 end

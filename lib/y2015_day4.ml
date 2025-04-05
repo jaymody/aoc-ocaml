@@ -1,6 +1,6 @@
 open! Base
 
-let solve secret_key n =
+let solve secret_key ~n =
   let prefix = String.init n ~f:(fun _ -> '0') in
   let rec solve' i =
     let digest =
@@ -12,27 +12,9 @@ let solve secret_key n =
 ;;
 
 module Part1 = struct
-  let solve reader writer =
-    let secret_key = In_channel.input_all reader |> String.strip in
-    solve secret_key 5 |> Int.to_string |> Out_channel.output_string writer
-  ;;
-
-  module Test = struct
-    let solve = Utils.solve_from_string solve
-
-    let%expect_test "a test" =
-      solve "abcdef";
-      [%expect {| 609043 |}];
-      solve "pqrstuv";
-      [%expect {| 1048970 |}];
-      ()
-    ;;
-  end
+  let solve = Utils.read_all_and_print_int (solve ~n:5)
 end
 
 module Part2 = struct
-  let solve reader writer =
-    let secret_key = In_channel.input_all reader |> String.strip in
-    solve secret_key 6 |> Int.to_string |> Out_channel.output_string writer
-  ;;
+  let solve = Utils.read_all_and_print_int (solve ~n:6)
 end

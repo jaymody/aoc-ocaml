@@ -22,6 +22,12 @@ module Rect = struct
   let of_strings ~topleft ~botright =
     { topleft = Coord.of_string topleft; botright = Coord.of_string botright }
   ;;
+
+  let to_seq { topleft; botright } =
+    Sequence.cartesian_product
+      (Sequence.range ~stop:`inclusive topleft.x botright.x)
+      (Sequence.range ~stop:`inclusive topleft.y botright.y)
+  ;;
 end
 
 module Grid = struct
@@ -35,89 +41,43 @@ module Grid = struct
     { lights = Array.create 0 ~len:(width * height); width; height }
   ;;
 
-  let idx_seq_of_rectangle t (rect : Rect.t) =
-    Sequence.cartesian_product
-      (Sequence.range ~stop:`inclusive rect.topleft.x rect.botright.x)
-      (Sequence.range ~stop:`inclusive rect.topleft.y rect.botright.y)
-    |> Sequence.map ~f:(fun (x, y) -> (x * t.width) + y)
-  ;;
-
-  let on t rect =
-    idx_seq_of_rectangle t rect |> Sequence.iter ~f:(fun idx -> t.lights.(idx) <- 1)
-  ;;
-
-  let off t rect =
-    idx_seq_of_rectangle t rect |> Sequence.iter ~f:(fun idx -> t.lights.(idx) <- 0)
-  ;;
-
-  let toggle t rect =
-    idx_seq_of_rectangle t rect
-    |> Sequence.iter ~f:(fun idx ->
-      t.lights.(idx) <- (if t.lights.(idx) = 0 then 1 else 0))
+  let set_rect t rect ~f =
+    Rect.to_seq rect
+    |> Sequence.iter ~f:(fun (x, y) ->
+      let idx = (x * t.width) + y in
+      t.lights.(idx) <- f t.lights.(idx))
   ;;
 
   let num_lights_on t = Array.sum (module Int) t.lights ~f:Fn.id
 end
 
-module Part1 = struct
-  let solve reader writer =
-    let grid = Grid.empty () in
-    let rec solve' () =
-      match In_channel.input_line reader with
-      | None -> ()
-      | Some line ->
-        (match String.split line ~on:' ' with
-         | [ "turn"; "off"; topleft; "through"; botright ] ->
-           Grid.off grid (Rect.of_strings ~topleft ~botright)
-         | [ "turn"; "on"; topleft; "through"; botright ] ->
-           Grid.on grid (Rect.of_strings ~topleft ~botright)
-         | [ "toggle"; topleft; "through"; botright ] ->
-           Grid.toggle grid (Rect.of_strings ~topleft ~botright)
-         | _ -> raise_s [%message "could not parse line" (line : string)]);
-        solve' ()
+let solve lines ~on ~off ~toggle =
+  let grid = Grid.empty () in
+  List.iter lines ~f:(fun line ->
+    let f, topleft, botright =
+      match String.split line ~on:' ' with
+      | [ "turn"; "off"; topleft; "through"; botright ] -> off, topleft, botright
+      | [ "turn"; "on"; topleft; "through"; botright ] -> on, topleft, botright
+      | [ "toggle"; topleft; "through"; botright ] -> toggle, topleft, botright
+      | _ -> raise_s [%message "could not parse line" (line : string)]
     in
-    solve' ();
-    Grid.num_lights_on grid |> Int.to_string |> Out_channel.output_string writer
+    let rect = Rect.of_strings ~topleft ~botright in
+    Grid.set_rect grid rect ~f);
+  Grid.num_lights_on grid
+;;
+
+module Part1 = struct
+  let solve =
+    solve ~on:(fun _ -> 1) ~off:(fun _ -> 0) ~toggle:(fun x -> if x = 0 then 1 else 0)
   ;;
+
+  let solve = Utils.read_lines_and_print_int solve
 end
 
 module Part2 = struct
-  module Grid = struct
-    include Grid
-
-    let on t rect =
-      idx_seq_of_rectangle t rect
-      |> Sequence.iter ~f:(fun idx -> t.lights.(idx) <- t.lights.(idx) + 1)
-    ;;
-
-    let off t rect =
-      idx_seq_of_rectangle t rect
-      |> Sequence.iter ~f:(fun idx -> t.lights.(idx) <- Int.max 0 (t.lights.(idx) - 1))
-    ;;
-
-    let toggle t rect =
-      idx_seq_of_rectangle t rect
-      |> Sequence.iter ~f:(fun idx -> t.lights.(idx) <- t.lights.(idx) + 2)
-    ;;
-  end
-
-  let solve reader writer =
-    let grid = Grid.empty () in
-    let rec solve' () =
-      match In_channel.input_line reader with
-      | None -> ()
-      | Some line ->
-        (match String.split line ~on:' ' with
-         | [ "turn"; "off"; topleft; "through"; botright ] ->
-           Grid.off grid (Rect.of_strings ~topleft ~botright)
-         | [ "turn"; "on"; topleft; "through"; botright ] ->
-           Grid.on grid (Rect.of_strings ~topleft ~botright)
-         | [ "toggle"; topleft; "through"; botright ] ->
-           Grid.toggle grid (Rect.of_strings ~topleft ~botright)
-         | _ -> raise_s [%message "could not parse line" (line : string)]);
-        solve' ()
-    in
-    solve' ();
-    Grid.num_lights_on grid |> Int.to_string |> Out_channel.output_string writer
+  let solve =
+    solve ~on:(fun x -> x + 1) ~off:(fun x -> Int.max 0 (x - 1)) ~toggle:(fun x -> x + 2)
   ;;
+
+  let solve = Utils.read_lines_and_print_int solve
 end

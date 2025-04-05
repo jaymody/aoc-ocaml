@@ -61,16 +61,20 @@ let evaluate tbl =
 ;;
 
 module Part1 = struct
-  let solve reader writer =
-    let tbl = create_rules_table (In_channel.input_lines reader) in
-    evaluate tbl "a" |> Int.to_string |> Out_channel.output_string writer
+  let solve lines =
+    let tbl = create_rules_table lines in
+    evaluate tbl "a"
   ;;
+
+  let solve = Utils.read_lines_and_print_int solve
 end
 
 module Part2 = struct
-  let solve reader writer =
-    let tbl = create_rules_table (In_channel.input_lines reader) in
+  let solve lines =
+    let tbl = create_rules_table lines in
     Hashtbl.set tbl ~key:"b" ~data:(Identity (Int.to_string (evaluate tbl "a")));
-    evaluate tbl "a" |> Int.to_string |> Out_channel.output_string writer
+    evaluate tbl "a"
   ;;
+
+  let solve = Utils.read_lines_and_print_int solve
 end
