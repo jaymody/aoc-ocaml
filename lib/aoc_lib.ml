@@ -15,6 +15,8 @@ let solve = function
   | "y2015_day6_part2" -> Y2015_day6.Part2.solve
   | "y2015_day7_part1" -> Y2015_day7.Part1.solve
   | "y2015_day7_part2" -> Y2015_day7.Part2.solve
+  | "y2015_day8_part1" -> Y2015_day8.Part1.solve
+  | "y2015_day8_part2" -> Y2015_day8.Part2.solve
   | problem -> Error.raise_s [%message "no solution found" (problem : string)]
 ;;
 
@@ -35,6 +37,7 @@ let run problem data_dir =
 let main () =
   match Sys.get_argv () with
   | [| _; problem |] -> run problem "data/"
+  | [| _; problem; "stdin" |] -> solve problem In_channel.stdin Out_channel.stdout
   | [| _; problem; data_dir |] -> run problem data_dir
   | _ ->
     failwith
