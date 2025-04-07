@@ -27,3 +27,15 @@ let read_lines_and_print_int solve in_channel out_channel =
   |> Int.to_string
   |> Out_channel.output_string out_channel
 ;;
+
+let permutations =
+  let rec insert x = function
+    | [] -> [ [ x ] ]
+    | hd :: tl as lst -> (x :: lst) :: List.map (insert x tl) ~f:(List.cons hd)
+  in
+  let rec permutations' = function
+    | [] -> [ [] ]
+    | hd :: tl -> List.concat_map (permutations' tl) ~f:(insert hd)
+  in
+  permutations'
+;;
