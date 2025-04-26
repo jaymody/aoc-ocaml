@@ -1,4 +1,4 @@
-open! Base
+open! Core
 
 let step = function
   | '(' -> 1

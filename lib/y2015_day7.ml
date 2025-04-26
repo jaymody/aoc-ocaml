@@ -1,4 +1,4 @@
-open! Base
+open! Core
 
 let last_16bits x = x land (Int.pow 2 16 - 1)
 let lshift_16 x n = last_16bits (x lsl n)

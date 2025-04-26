@@ -1,4 +1,4 @@
-open! Base
+open! Core
 
 module Part1 = struct
   let rec num_in_mem_chars = function

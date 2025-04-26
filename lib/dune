@@ -1,7 +1,7 @@
 (library
  (name aoc_lib)
  (inline_tests)
- (libraries base)
+ (libraries base core)
  (preprocess
   (pps ppx_jane))
  ; [-linkall] is needed to ensure all modules are compiled. By default, the

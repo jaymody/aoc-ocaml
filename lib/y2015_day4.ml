@@ -1,4 +1,4 @@
-open! Base
+open! Core
 
 let solve secret_key ~n =
   let prefix = String.init n ~f:(fun _ -> '0') in

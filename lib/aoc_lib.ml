@@ -1,4 +1,4 @@
-open! Base
+open! Core
 
 let solve = function
   | "y2015_day1_part1" -> Y2015_day1.Part1.solve

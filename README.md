@@ -5,7 +5,7 @@ Use `OCaml 5.3.0` and [Base](https://github.com/janestreet/base):
 opam switch create 5.3.0
 opam switch 5.3.0
 opam install ocaml-lsp-server ocamlformat utop
-opam install base ppx_jane ppx_expect
+opam install base core ppx_jane ppx_expect
 ```
 
 Download your puzzle data from advent of code. You'll need to get your session

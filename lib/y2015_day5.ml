@@ -1,4 +1,4 @@
-open! Base
+open! Core
 
 let solve ~is_nice_string =
   Utils.read_lines_and_print_int

@@ -1,4 +1,4 @@
-open! Base
+open! Core
 
 module Pair = struct
   type t = string * string [@@deriving compare, sexp_of, hash]

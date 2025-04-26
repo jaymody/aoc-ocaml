@@ -1,4 +1,4 @@
-open! Base
+open! Core
 
 let parse line =
   match String.split line ~on:'x' |> List.map ~f:Int.of_string with

@@ -1,4 +1,4 @@
-open! Base
+open! Core
 
 module Pos = struct
   module T = struct
