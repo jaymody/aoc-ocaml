@@ -46,3 +46,5 @@ let permutations =
   in
   permutations'
 ;;
+
+let rec apply_n_timesi ~n f x = if n <= 0 then x else apply_n_timesi ~n:(n - 1) f (f n x)
