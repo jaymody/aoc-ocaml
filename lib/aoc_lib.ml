@@ -31,6 +31,8 @@ let solve = function
   | "y2015_day14_part2" -> Y2015_day14.Part2.solve
   | "y2015_day15_part1" -> Y2015_day15.Part1.solve
   | "y2015_day15_part2" -> Y2015_day15.Part2.solve
+  | "y2015_day16_part1" -> Y2015_day16.Part1.solve
+  | "y2015_day16_part2" -> Y2015_day16.Part2.solve
   | problem -> Error.raise_s [%message "no solution found" (problem : string)]
 ;;
 

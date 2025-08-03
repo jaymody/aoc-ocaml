@@ -35,6 +35,14 @@ let read_all_and_print_string solve in_channel out_channel =
   |> Out_channel.output_string out_channel
 ;;
 
+let read_lines_and_print_string solve in_channel out_channel =
+  in_channel
+  |> In_channel.input_lines
+  |> List.map ~f:String.strip
+  |> solve
+  |> Out_channel.output_string out_channel
+;;
+
 let permutations =
   let rec insert x = function
     | [] -> [ [ x ] ]
